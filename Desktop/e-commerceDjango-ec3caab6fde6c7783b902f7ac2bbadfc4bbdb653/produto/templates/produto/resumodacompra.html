@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load omfilters %}
+
+{% block titulo %}Resumo da compra | {% endblock %}
+
+{% block conteudo %}
+<!-- Main Section-->
+<section class="mt-0">
+    <!-- Page Content Goes Here -->
+    <div class="container">
+        <div class="row g-0">
+            <div class="col-lg-7 pt-5 pt-lg-10">
+                <div class="pe-lg-5">
+
+                    <nav class="d-none d-md-block">
+                        <ul class="list-unstyled d-flex justify-content-start mt-4 align-items-center fw-bolder small">
+                            <li class="me-4"><a class="nav-link-checkout " href="">Seu carrinho</a></li>
+                            <li class="me-4"><a class="nav-link-checkout active" href="">Informações</a>
+                            </li>
+                            <li class="me-4"><a class="nav-link-checkout " href="">Envio</a>
+                            </li>
+                            <li><a class="nav-link-checkout nav-link-last " href="">Pagamento</a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <div class="row mb-5">
+                        <div class="col-lg">
+                            <br>
+                            <h2>Resumo da sua compra</h2>
+
+                            <p class="lead">Dados do usuário</p>
+                            <p>Caso precise editar, <a href="{% url 'perfil:criar' %}">clique aqui</a></p>
+                            <dl class="row">
+                                <dt class="col-lg-2">Nome:</dt>
+                                <dd class="col-lg-4">{{ usuario.first_name }}</dd>
+                                <dt class="col-lg-2">Sobrenome:</dt>
+                                <dd class="col-lg-4">{{ usuario.last_name }}</dd>
+
+                                <dt class="col-lg-2">Idade:</dt>
+                                <dd class="col-lg-4">{{ usuario.perfil.idade }}</dd>
+                                <dt class="col-lg-2">Nascimento:</dt>
+                                <dd class="col-lg-4">{{ usuario.perfil.data_nascimento }}</dd>
+
+                                <dt class="col-lg-2">CPF:</dt>
+                                <dd class="col-lg-4">{{ usuario.perfil.cpf }}</dd>
+                                <dt class="col-lg-2">E-mail:</dt>
+                                <dd class="col-lg-4">{{ usuario.email }}</dd>
+                            </dl>
+
+                            <p class="lead">Dados de endereço</p>
+                            <p>Caso precise editar, <a href="{% url 'perfil:criar' %}">clique aqui</a></p>
+                            <dl class="row">
+                                <dt class="col-lg-2">Endereço:</dt>
+                                <dd class="col-lg-4">{{ usuario.perfil.endereco }}</dd>
+                                <dt class="col-lg-2">Número:</dt>
+                                <dd class="col-lg-4">{{ usuario.perfil.numero }}</dd>
+
+                                <dt class="col-lg-2">Complemento:</dt>
+                                <dd class="col-lg-4">{{ usuario.perfil.complemento }}</dd>
+                                <dt class="col-lg-2">Nascimento:</dt>
+                                <dd class="col-lg-4">{{ usuario.perfil.bairro }}</dd>
+
+                                <dt class="col-lg-2">Cidade:</dt>
+                                <dd class="col-lg-4">{{ usuario.perfil.cidade }}</dd>
+                                <dt class="col-lg-2">Estado:</dt>
+                                <dd class="col-lg-4">{{ usuario.perfil.estado }}</dd>
+
+                                <dt class="col-lg-2">CEP:</dt>
+                                <dd class="col-lg-4">{{ usuario.perfil.cep }}</dd>
+                            </dl>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-12 col-lg-5 bg-light pt-lg-10 aside-checkout pb-5 pb-lg-0 my-5 my-lg-0">
+                <div class="p-4 py-lg-0 pe-lg-0 ps-lg-5">
+                    <div class="pb-3">
+                        {% for linha in carrinho.values %}
+
+                        <!-- Cart Item-->
+                        <div class="row mx-0 py-4 g-0 border-bottom">
+                            <div class="col-2 position-relative">
+                                <span class="checkout-item-qty">{{ linha.quantidade }}</span>
+                                <picture class="d-block border">
+                                    <img class="img-fluid" src="{% get_media_prefix %}{{ linha.imagem }}"
+                                        alt="HTML Bootstrap Template by Pixel Rocket">
+                                </picture>
+                            </div>
+                            <div class="col-9 offset-1">
+                                <div>
+                                    <h6 class="justify-content-between d-flex align-items-start mb-2">
+                                        {{ linha.produto_nome }}
+
+
+                                    </h6>
+                                    Tamanho: {{ linha.variacao_nome }}<br>
+                                    Quantidade: {{ linha.quantidade }}
+                                </div>
+                                <p class="fw-bolder text-end text-muted m-0">
+                                    {% if linha.preco_quantitativo_promocional %}
+                                    {{ linha.preco_quantitativo_promocional|formata_preco }}
+                                    {% else %}
+                                    {{ linha.preco_quantitativo|formata_preco }}
+                                    {% endif %}</p>
+                            </div>
+                        </div> <!-- / Cart Item-->
+                        {% endfor %}
+                    </div>
+
+                    <div class="py-4">
+                        <div class="input-group mb-0">
+                            <input type="text" class="form-control" id="cupom-input" placeholder="Insira seu cupom">
+                            <button class="btn btn-secondary btn-sm px-4" onclick="aplicarCupom()">Aplicar</button>
+                        </div>
+                    </div>
+
+
+                    <script>
+                        function aplicarCupom() {
+                            var cupomCodigo = document.getElementById("cupom-input").value;
+                            var url = "{% url 'produto:resumodacompra' %}?cupom=" + cupomCodigo;
+                            window.location.href = url;
+                        }
+                    </script>
+
+                    <!-- ... -->
+
+                    <div class="pb-4 border-bottom">
+                        <div class="d-flex flex-column flex-md-row justify-content-md-between mb-4 mb-md-2">
+                            <div>
+                                <p class="m-0 fw-bold fs-5">Total</p>
+                            </div>
+                            <p class="m-0 fs-5 fw-bold">
+                                {% if cupom_aplicado %}
+                                {{ cart_totals|formata_preco }}
+                                {% else %}
+                                {{ cart_totals|formata_preco }}
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="pt-5  pb-5 border-top d-flex justify-content-md-end align-items-center">
+                        <!-- Adicione essa linha no template onde está renderizando o botão "Salvar Pedido" -->
+                        <a href="{% url 'pedido:salvarpedido'  %}" class="btn btn-dark w-100 w-md-auto"
+                            role="button">Salvar Pedido</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Content -->
+</section>
+<!-- / Main Section-->
+
+{% endblock %}
