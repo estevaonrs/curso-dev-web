@@ -1,0 +1,97 @@
+{% load omfilters %}
+{% load static %}
+<style>
+    @media (max-width: 767px) {
+        .navbar-brand.d-flex {
+            flex-grow: 1;
+            justify-content: center;
+            margin-left: 7%;
+            /* Ajuste o valor conforme necessário */
+        }
+    }
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #000; margin-bottom: 10px;">
+    <div class="container-fluid position-relative">
+        <a class="navbar-brand d-flex justify-content-center align-items-center" href="{% url 'produto:lista' %}">
+            <img src="{% static 'images/logos/logoab.png'%}" alt="HTML Bootstrap Template by Pixel Rocket"
+                style="width: 280px; margin-top: 05px;" class="img-fluid">
+        </a>
+
+
+        <a class="navbar-toggler" href="{% url 'produto:carrinho' %}"
+            style="background-color: #f5f5f5; position: absolute; top: 65%; right: 14px; border-radius: 10%;">
+            <i class="fas fa-shopping-cart" style="color: #000;"></i>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation"
+            style="border-radius: 10%; background-color: #f5f5f5;">
+            <i class="fa-solid fa-sliders" style="color: #000;"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav ms-auto"> <!-- Adicionada a classe ms-auto -->
+                <li class="nav-item" style="margin-top: 15px;">
+                    <form class="input-group" method="GET" action="{% url 'produto:busca' %}">
+                        <input name="termo" value="{{ request.GET.termo }}" class="form-control border-0"
+                            placeholder="Pesquisar" style="background-color: #f2f2f2; height: 40px;">
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary py-0" type="submit"
+                                style="background-color: #333; border-color: #333; height: 40px;">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </li>
+                <br>
+                {% if request.session.carrinho %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'produto:carrinho' %}"
+                        style="font-size: 14px; background-color:  #000;">
+                        Carrinho <i class="fas fa-shopping-cart"></i>({{ request.session.carrinho|cart_total_qtd }}X)
+                    </a>
+                </li>
+                {% endif %}
+                {% if request.user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false"
+                        style="font-size: 14px; background-color:  #000;">
+                        Minha conta
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'pedido:lista' %}">Meus pedidos</a></li>
+                        <li><a class="dropdown-item" href="{% url 'perfil:criar' %}">Atualizar meus dados</a></li>
+                        <li><a class="dropdown-item" href="{% url 'perfil:logout' %}">Sair</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'cliente:codigo_acesso' %}"
+                        style="font-size: 14px; background-color:  #000;">
+                        Catálogo de atacado
+                    </a>
+                </li>
+                {% if request.user.is_superuser %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'gestao:dashboard' %}"
+                        style="font-size: 14px; background-color:  #000;">
+                        Painel Administrativo
+                    </a>
+                </li>
+                {% endif %}
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'perfil:criar' %}">
+                        Login
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'cliente:codigo_acesso' %}">
+                        Catálogo de atacado
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

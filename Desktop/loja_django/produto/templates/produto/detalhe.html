@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% load omfilters %}
+
+{% block titulo %}Produtos | {% endblock %}
+
+{% block conteudo %}
+
+<!-- Main Section-->
+<section class="mt-0 ">
+    <!-- Page Content Goes Here -->
+
+
+
+    <div class="container-fluid mt-5">
+
+        <!-- Product Top Section-->
+        <div class="row g-9" data-sticky-container>
+
+            <!-- Product Images-->
+            <div class="col-12 col-md-6 col-xl-7">
+                <div class="row g-3" data-aos="fade-right">
+                    <div class="col-12">
+                        <picture>
+                            <img class="img-fluid" data-zoomable src="{{ produto.imagem.url }}"
+                                alt="{{ produto.nome }}">
+                        </picture>
+                    </div>
+                    {% for imagem in produto.imagens.all %}
+                    {% if imagem.imagem %}
+                    <div class="col-12">
+                        <picture>
+                            <img class="img-fluid" data-zoomable src="{{ imagem.imagem.url }}"
+                                alt="HTML Bootstrap Template by Pixel Rocket">
+                        </picture>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+
+                </div>
+            </div>
+            <!-- /Product Images-->
+
+
+
+            <!-- Product Information-->
+            <div class="col-12 col-md-6 col-lg-5">
+                <div class="sticky-top top-5">
+                    <div class="pb-3" data-aos="fade-in">
+
+
+                        <div class="pb-3 text-center" data-aos="fade-in">
+                            <h1 class="mb-1 fs-2 fw-bold" style="font-size: 65px;">{{ produto.nome }}</h1><br>
+
+
+                            <div class="d-flex justify-content-center align-items-center text-center">
+                                <p class="fs-4 m-0">
+                                    {% if produto.preco_marketing_promocional %}
+                                    <span id="variation-preco-promocional" class="product-price mb-2"
+                                        style="font-size: 35px; font-weight: bold;">
+                                        {{ produto.preco_marketing_promocional|formata_preco }}
+                                    </span>
+                                    <span id="variation-preco" class="product-old-price text-muted mb-2"
+                                        style="font-size: 24px;">
+                                        <s>{{ produto.preco_marketing|formata_preco }}</s>
+                                    </span>
+                                    {% else %}
+                                    <span id="variation-preco" class="product-price mb-2" style="font-size: 35px;">
+                                        {{ produto.preco_marketing|formata_preco }}
+                                    </span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        <p class="text-center" style="font-size: 16px;">Selecione o tamanho</p>
+
+                        <form action="{% url 'produto:adicionaraocarrinho' %}" id="form-add-to-cart">
+                            <div class="form-group d-flex justify-content-center flex-wrap">
+                                {% for variacao in produto.variacao_set.all %}
+                                {% if variacao.preco_promocional %}
+                                <div class="form-check form-check-inline p-2">
+                                    <input class="form-check-input" type="radio" name="vid"
+                                        id="variacao-{{ variacao.id }}" value="{{ variacao.id }}" {% if forloop.first %}
+                                        checked {% endif %}>
+                                    <label class="form-check-label rounded-circle" for="variacao-{{ variacao.id }}"
+                                        style="width: 60px; height: 60px; background-color: #f8f9fa; border: 1px solid #dee2e6; display: flex; justify-content: center; align-items: center;">
+                                        {% if variacao.nome %}
+                                        {{ variacao.nome }}
+                                        {% else %}
+                                        {{ variacao }}
+                                        {% endif %}
+                                    </label>
+                                </div>
+                                {% else %}
+                                <div class="form-check form-check-inline p-2">
+                                    <input class="form-check-input" type="radio" name="vid"
+                                        id="variacao-{{ variacao.id }}" value="{{ variacao.id }}">
+                                    <label class="form-check-label rounded-circle" for="variacao-{{ variacao.id }}"
+                                        style="width: 60px; height: 60px; background-color: #f8f9fa; border: 1px solid #dee2e6; display: flex; justify-content: center; align-items: center;">
+                                        {% if variacao.nome %}
+                                        {{ variacao.nome }}
+                                        {% endif %}
+                                    </label>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-dark btn-lg">
+                                    <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                                    Adicionar ao Carrinho
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Color Options -->
+                        <div class="mt-5 text-center">
+                            <h3 class="mb-3">Cores Disponíveis</h3>
+                            <div class="color-options ">
+                                {% for produto_igual in produtos_iguais %}
+                                {% if produto_igual.imagem %}
+                                <a href="{% url 'produto:detalhe' produto_igual.slug %}">
+                                    <div class="color-option"
+                                        style="background-image: url('{{ produto_igual.imagem.url }}');"></div>
+                                </a>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <!-- / Color Options -->
+
+                        <!-- Product Highlights-->
+                        <div class="my-5">
+                            <div class="row">
+                                <div class="col-12 col-md-4">
+                                    <div class="text-center px-2">
+                                        <i class="ri-24-hours-line ri-2x"></i>
+                                        <small class="d-block mt-1">Envio rápido</small>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <div class="text-center px-2">
+                                        <i class="ri-secure-payment-line ri-2x"></i>
+                                        <small class="d-block mt-1">Pagamento seguro</small>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <div class="text-center px-2">
+                                        <i class="ri-service-line ri-2x"></i>
+                                        <small class="d-block mt-1">Ótimo suporte</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- / Product Highlights-->
+
+                        <!-- Product Accordion -->
+                        <div class="accordion" id="accordionProduct">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingOne">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                        Descrição
+                                    </button>
+                                </h2>
+                                <div id="collapseOne" class="accordion-collapse collapse show"
+                                    aria-labelledby="headingOne" data-bs-parent="#accordionProduct">
+                                    <div class="accordion-body">
+                                        <p class="m-0">{{ produto.descricao_curta }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- / Product Accordion-->
+
+
+
+                        <style>
+                            .color-options {
+                                display: flex;
+                                flex-wrap: wrap;
+                                gap: 10px;
+                            }
+
+                            .color-option {
+                                width: 100px;
+                                height: 100px;
+                                background-size: cover;
+                                background-position: center;
+                                background-repeat: no-repeat;
+                            }
+                        </style>
+
+                    </div>
+                </div>
+            </div>
+            <!-- / Product Information-->
+        </div>
+        <!-- / Product Top Section-->
+
+
+    </div>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- /Page Content -->
+</section>
+<!-- / Main Section-->
+
+{% endblock %}
